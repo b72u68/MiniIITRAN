@@ -1,0 +1,12 @@
+$ result: 8
+INTEGER RESULT, N, T0, T1, T
+N <- 5
+T0 <- 0
+T1 <- 1
+WHILE N > 0 DO
+  T <- T0 + T1
+  T0 <- T1
+  T1 <- T
+  N <- N - 1
+END
+RESULT <- T1

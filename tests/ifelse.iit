@@ -1,0 +1,7 @@
+$result: 0
+INTEGER RESULT
+RESULT <- 0
+IF 2 < 1
+  IF 1 < 2 RESULT <- 1
+  ELSE RESULT <- 2
+  

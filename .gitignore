@@ -1,0 +1,9 @@
+*.cmo
+*.cmi
+*.cmx
+*.o
+parser.ml
+parser.mli
+lexer.mli
+parser.automaton
+parser.conflicts

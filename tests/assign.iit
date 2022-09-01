@@ -1,0 +1,3 @@
+$ result: 42
+INTEGER RESULT
+RESULT <- 42

@@ -1,0 +1,9 @@
+$result: 1
+LOGICAL A, B, C, D, E
+INTEGER RESULT
+A <- 12 < 30
+B <- 1 > 40
+C <- 1 # 2
+D <- A AND B
+E <- A AND (NOT B)
+RESULT <- INT (D OR E)
