@@ -15,8 +15,6 @@ let empty_env : env = Env.empty
 let val_of_const =
   function CChar c -> (Char.code c, TCharacter)
          | CInt n -> (n, TInteger)
-         | CLog false -> (0, TLogical)
-         | CLog true -> (1, TLogical)
 
 let to_log n = if n > 0 then 1 else 0
 let log_of_bool = function true -> 1 | false -> 0

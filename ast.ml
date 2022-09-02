@@ -27,7 +27,6 @@ type unop = UNeg
 
 type const = CChar of char
            | CInt of int
-           | CLog of bool
 
 type 'a exp_ = EConst of const
              | EVar of var

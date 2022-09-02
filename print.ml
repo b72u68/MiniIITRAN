@@ -42,13 +42,11 @@ let pprint_as_type f v t =
   | TLogical -> fprintf f "%d" (if v > 0 then 1 else 0)
   | TInteger -> fprintf f "%d" v
   | TCharacter -> fprintf f "%c" (Char.chr v)
-          
+
 let pprint_const f c =
   match c with
   | CChar c -> fprintf f "%c" c
   | CInt i -> fprintf f "%d" i
-  | CLog true -> fprintf f "1"
-  | CLog false -> fprintf f "0"
 
 let unop_lvl = 8
 
@@ -78,7 +76,7 @@ let rec pprint_exp lvl f e =
        (if lvl > unop_lvl then "(" else "")
 
 let pprint_exp f e = pprint_exp 0 f e
-    
+
 let pprint_string f s = fprintf f "%s" s
 
 let rec seq p sep f l =

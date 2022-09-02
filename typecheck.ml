@@ -16,12 +16,11 @@ let t_error expected got loc =
 
 let lookup (ctx: ctx) (v: var) =
   VMap.find v ctx
-         
+
 let rec typecheck_const (c: const) : typ =
   match c with
   | CChar _ -> TCharacter
   | CInt _ -> TInteger
-  | CLog _ -> TLogical
 
 let rec typecheck_exp (ctx: ctx) (e: p_exp) : t_exp  =
   match e.edesc with
@@ -77,7 +76,7 @@ let rec typecheck_exp (ctx: ctx) (e: p_exp) : t_exp  =
       else t_error etype e1t e1.eloc
      );
      mk_t_exp (EUnop (u, e1')) e.eloc rtype
-       
+
 let rec typecheck_stmt (ctx: ctx) (s: p_stmt) : ctx * t_stmt =
   let add_to_ctx t ctx v =
     VMap.add v t ctx
