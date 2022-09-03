@@ -33,7 +33,7 @@
 %left LT LE GT GE NE EQUAL
 %left PLUS MINUS
 %left TIMES DIV
-%left NEG NOT CCHAR CINT CLG
+%nonassoc NEG NOT CCHAR CINT CLG
 
 %start prog
 %type <Ast.p_stmt list> prog
