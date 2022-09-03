@@ -12,7 +12,6 @@
 
 %token <int> INT
 %token <char> CHAR
-(*%token <bool> LOGICAL*)
 %token <string> IDENT
 %token TINT TCHARACTER TLOGICAL
 %token ASSIGN
