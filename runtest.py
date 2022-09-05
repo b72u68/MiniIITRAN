@@ -24,6 +24,9 @@ try:
             else:
                 lines = f.readlines()
                 expected_result = lines[0].split(":")[1].strip("\n").strip(" ")
+                if not expected_result.isnumeric():
+                    # expected result is a character, not an integer
+                    expected_result = expected_result.strip("'")
                 expected_exit_code = 0
             process = subprocess.run(["./iitran", join(testdir, testfile)], capture_output=True, text=True)
             exit_code = process.returncode
