@@ -45,68 +45,79 @@
 %type <Ast.p_stmt> openstmt
 %type <Ast.p_stmt> decl
 %type <Ast.p_exp> expr
+%type <Ast.p_exp> bexpr
+%type <Ast.p_exp> uexpr
 %type <Ast.const> const
 %type <Ast.typ> typ
 
 %%
 
 const:
-  | INT { CInt $1 }
-  | CHAR { CChar $1 }
+  | n=INT { CInt n }
+  | c=CHAR { CChar c }
 ;
 
 expr:
   (* constants *)
-  | const { mk_exp (EConst $1) $loc }
+  | c=const { mk_exp (EConst c) $loc }
 
   (* id *)
-  | IDENT { mk_exp (EVar $1) $loc }
+  | i=IDENT { mk_exp (EVar i) $loc }
 
-  (* binary operations *)
-  | expr PLUS expr { mk_exp (EBinop (BAdd, $1, $3)) $loc }
-  | expr MINUS expr { mk_exp (EBinop (BSub, $1, $3)) $loc }
-  | expr TIMES expr { mk_exp (EBinop (BMul, $1, $3)) $loc }
-  | expr DIV expr { mk_exp (EBinop (BDiv, $1, $3)) $loc }
-  | expr AND expr { mk_exp (EBinop (BAnd, $1, $3)) $loc }
-  | expr OR expr { mk_exp (EBinop (BOr, $1, $3)) $loc }
-  | expr LT expr { mk_exp (EBinop (BLt, $1, $3)) $loc }
-  | expr LE expr { mk_exp (EBinop (BLe, $1, $3)) $loc }
-  | expr GT expr { mk_exp (EBinop (BGt, $1, $3)) $loc }
-  | expr GE expr { mk_exp (EBinop (BGe, $1, $3)) $loc }
-  | expr NE expr { mk_exp (EBinop (BNe, $1, $3)) $loc }
-  | expr EQUAL expr { mk_exp (EBinop (BEq, $1, $3)) $loc }
+  (* binary expression *)
+  | e=bexpr { e }
 
-  (* assign *)
-  | expr ASSIGN expr { mk_exp (EAssign ($1, $3)) $loc }
+  (* unary expression *)
+  | e=uexpr { e }
 
-  (* unary operations *)
-  | NOT expr { mk_exp (EUnop (UNot, $2)) $loc }
-  | NEG expr { mk_exp (EUnop (UNeg, $2)) $loc }
-  | CINT expr { mk_exp (EUnop (UInt, $2)) $loc }
-  | CCHAR expr { mk_exp (EUnop (UChar, $2)) $loc }
-  | CLG expr { mk_exp (EUnop (ULog, $2)) $loc }
+  (* assignment *)
+  | e1=expr; ASSIGN; e2=expr { mk_exp (EAssign (e1, e2)) $loc }
 
   (* grouping *)
   | LPAREN expr RPAREN { $2 }
+
+;
+
+bexpr:
+  | e1=expr; PLUS; e2=expr { mk_exp (EBinop (BAdd, e1, e2)) $loc }
+  | e1=expr; MINUS; e2=expr { mk_exp (EBinop (BSub, e1, e2)) $loc }
+  | e1=expr; TIMES; e2=expr { mk_exp (EBinop (BMul, e1, e2)) $loc }
+  | e1=expr; DIV; e2=expr { mk_exp (EBinop (BDiv, e1, e2)) $loc }
+  | e1=expr; AND; e2=expr { mk_exp (EBinop (BAnd, e1, e2)) $loc }
+  | e1=expr; OR; e2=expr { mk_exp (EBinop (BOr, e1, e2)) $loc }
+  | e1=expr; LT; e2=expr { mk_exp (EBinop (BLt, e1, e2)) $loc }
+  | e1=expr; LE; e2=expr { mk_exp (EBinop (BLe, e1, e2)) $loc }
+  | e1=expr; GT; e2=expr { mk_exp (EBinop (BGt, e1, e2)) $loc }
+  | e1=expr; GE; e2=expr { mk_exp (EBinop (BGe, e1, e2)) $loc }
+  | e1=expr; NE; e2=expr { mk_exp (EBinop (BNe, e1, e2)) $loc }
+  | e1=expr; EQUAL; e2=expr { mk_exp (EBinop (BEq, e1, e2)) $loc }
+;
+
+uexpr:
+  | NOT e=expr { mk_exp (EUnop (UNot, e)) $loc }
+  | NEG e=expr { mk_exp (EUnop (UNeg, e)) $loc }
+  | CINT e=expr { mk_exp (EUnop (UInt, e)) $loc }
+  | CCHAR e=expr { mk_exp (EUnop (UChar, e)) $loc }
+  | CLG e=expr { mk_exp (EUnop (ULog, e)) $loc }
 ;
 
 closedstmt:
-  | IF expr closedstmt ELSE closedstmt { mk_stmt $loc (SIf ($2, $3, Some $5)) }
-  | expr { mk_stmt $loc (SExp $1) }
+  | IF; e=expr; s1=closedstmt; ELSE; s2=closedstmt { mk_stmt $loc (SIf (e, s1, Some s2)) }
+  | e=expr { mk_stmt $loc (SExp e) }
   | STOP { mk_stmt $loc SStop }
-  | DO stmtlist END { mk_stmt $loc (SDo $2) }
-  | WHILE expr closedstmt { mk_stmt $loc (SWhile ($2, $3)) }
+  | DO; sl=stmtlist; END { mk_stmt $loc (SDo sl) }
+  | WHILE; e=expr; s=closedstmt { mk_stmt $loc (SWhile (e, s)) }
 ;
 
 openstmt:
-  | IF expr stmt { mk_stmt $loc (SIf ($2, $3, None)) }
-  | IF expr closedstmt ELSE openstmt { mk_stmt $loc (SIf ($2, $3, Some $5)) }
-  | WHILE expr openstmt { mk_stmt $loc (SWhile ($2, $3)) }
+  | IF; e=expr; s=stmt { mk_stmt $loc (SIf (e, s, None)) }
+  | IF; e=expr; s1=closedstmt; ELSE; s2=openstmt { mk_stmt $loc (SIf (e, s1, Some s2)) }
+  | WHILE; e=expr; s=openstmt { mk_stmt $loc (SWhile (e, s)) }
 ;
 
 stmt:
-  | closedstmt { $1 }
-  | openstmt { $1 }
+  | s=closedstmt { s }
+  | s=openstmt { s }
 ;
 
 typ:
@@ -116,24 +127,24 @@ typ:
 ;
 
 varlist:
-  | IDENT { [$1] }
-  | IDENT COMMA varlist { $1::$3 }
+  | i=IDENT { [i] }
+  | i=IDENT; COMMA; vl=varlist { i::vl }
 ;
 
 decl:
-  | typ varlist { mk_stmt $loc (SDecl ($1, $2)) }
+  | t=typ; vl=varlist { mk_stmt $loc (SDecl (t, vl)) }
 ;
 
 decllist:
   | { [] }
-  | decl decllist { $1::$2 }
+  | d=decl; dl=decllist { d::dl }
 ;
 
 stmtlist:
   | { [] }
-  | stmt stmtlist { $1::$2 }
+  | s=stmt; sl=stmtlist { s::sl }
 ;
 
 prog:
-| decllist stmtlist EOF { $1 @ $2 }
+  | dl=decllist; sl=stmtlist; EOF { dl @ sl }
 ;

@@ -238,7 +238,7 @@ let
 
   | 6 ->
 # 50 "lexer.mll"
-              ( ASSIGN)
+              ( ASSIGN )
 # 243 "lexer.ml"
 
   | 7 ->

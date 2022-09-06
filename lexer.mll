@@ -47,7 +47,7 @@ and token = parse
 
        | ident as s { try Hashtbl.find keywords (String.lowercase_ascii s)
                       with Not_found -> IDENT (String.lowercase_ascii s) }
-       | "<-" { ASSIGN}
+       | "<-" { ASSIGN }
        | "," { COMMA }
        | "+" { PLUS }
        | "-" { MINUS }
