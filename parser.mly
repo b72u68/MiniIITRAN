@@ -74,7 +74,7 @@ expr:
   | e1=expr; ASSIGN; e2=expr { mk_exp (EAssign (e1, e2)) $loc }
 
   (* grouping *)
-  | LPAREN expr RPAREN { $2 }
+  | LPAREN; e=expr; RPAREN { e }
 
 ;
 
@@ -94,11 +94,11 @@ bexpr:
 ;
 
 uexpr:
-  | NOT e=expr { mk_exp (EUnop (UNot, e)) $loc }
-  | NEG e=expr { mk_exp (EUnop (UNeg, e)) $loc }
-  | CINT e=expr { mk_exp (EUnop (UInt, e)) $loc }
-  | CCHAR e=expr { mk_exp (EUnop (UChar, e)) $loc }
-  | CLG e=expr { mk_exp (EUnop (ULog, e)) $loc }
+  | NOT; e=expr { mk_exp (EUnop (UNot, e)) $loc }
+  | NEG; e=expr { mk_exp (EUnop (UNeg, e)) $loc }
+  | CINT; e=expr { mk_exp (EUnop (UInt, e)) $loc }
+  | CCHAR; e=expr { mk_exp (EUnop (UChar, e)) $loc }
+  | CLG; e=expr { mk_exp (EUnop (ULog, e)) $loc }
 ;
 
 closedstmt:
@@ -116,8 +116,7 @@ openstmt:
 ;
 
 stmt:
-  | s=closedstmt { s }
-  | s=openstmt { s }
+  | s=closedstmt | s=openstmt { s }
 ;
 
 typ:
