@@ -39,14 +39,16 @@
 %type <Ast.p_stmt list> prog
 %type <Ast.p_stmt list> decllist
 %type <Ast.p_stmt list> stmtlist
-%type <Ast.var list> varlist
 %type <Ast.p_stmt> stmt
 %type <Ast.p_stmt> closedstmt
+%type <unit Ast.stmt_> closedstmt_
 %type <Ast.p_stmt> openstmt
+%type <unit Ast.stmt_> openstmt_
 %type <Ast.p_stmt> decl
+%type <Ast.var list> separated_nonempty_list(COMMA, IDENT)
 %type <Ast.p_exp> expr
-%type <Ast.p_exp> bexpr
-%type <Ast.p_exp> uexpr
+%type <unit Ast.exp_> bexpr_
+%type <unit Ast.exp_> uexpr_
 %type <Ast.const> const
 %type <Ast.typ> typ
 
@@ -65,10 +67,10 @@ expr:
   | i=IDENT { mk_exp (EVar i) $loc }
 
   (* binary expression *)
-  | e=bexpr { e }
+  | e=bexpr_ { mk_exp e $loc }
 
   (* unary expression *)
-  | e=uexpr { e }
+  | e=uexpr_ { mk_exp e $loc }
 
   (* assignment *)
   | e1=expr; ASSIGN; e2=expr { mk_exp (EAssign (e1, e2)) $loc }
@@ -78,41 +80,49 @@ expr:
 
 ;
 
-bexpr:
-  | e1=expr; PLUS; e2=expr { mk_exp (EBinop (BAdd, e1, e2)) $loc }
-  | e1=expr; MINUS; e2=expr { mk_exp (EBinop (BSub, e1, e2)) $loc }
-  | e1=expr; TIMES; e2=expr { mk_exp (EBinop (BMul, e1, e2)) $loc }
-  | e1=expr; DIV; e2=expr { mk_exp (EBinop (BDiv, e1, e2)) $loc }
-  | e1=expr; AND; e2=expr { mk_exp (EBinop (BAnd, e1, e2)) $loc }
-  | e1=expr; OR; e2=expr { mk_exp (EBinop (BOr, e1, e2)) $loc }
-  | e1=expr; LT; e2=expr { mk_exp (EBinop (BLt, e1, e2)) $loc }
-  | e1=expr; LE; e2=expr { mk_exp (EBinop (BLe, e1, e2)) $loc }
-  | e1=expr; GT; e2=expr { mk_exp (EBinop (BGt, e1, e2)) $loc }
-  | e1=expr; GE; e2=expr { mk_exp (EBinop (BGe, e1, e2)) $loc }
-  | e1=expr; NE; e2=expr { mk_exp (EBinop (BNe, e1, e2)) $loc }
-  | e1=expr; EQUAL; e2=expr { mk_exp (EBinop (BEq, e1, e2)) $loc }
+bexpr_:
+  | e1=expr; PLUS; e2=expr { EBinop (BAdd, e1, e2) }
+  | e1=expr; MINUS; e2=expr { EBinop (BSub, e1, e2) }
+  | e1=expr; TIMES; e2=expr { EBinop (BMul, e1, e2) }
+  | e1=expr; DIV; e2=expr { EBinop (BDiv, e1, e2) }
+  | e1=expr; AND; e2=expr { EBinop (BAnd, e1, e2) }
+  | e1=expr; OR; e2=expr { EBinop (BOr, e1, e2) }
+  | e1=expr; LT; e2=expr { EBinop (BLt, e1, e2) }
+  | e1=expr; LE; e2=expr { EBinop (BLe, e1, e2) }
+  | e1=expr; GT; e2=expr { EBinop (BGt, e1, e2) }
+  | e1=expr; GE; e2=expr { EBinop (BGe, e1, e2) }
+  | e1=expr; NE; e2=expr { EBinop (BNe, e1, e2) }
+  | e1=expr; EQUAL; e2=expr { EBinop (BEq, e1, e2) }
 ;
 
-uexpr:
-  | NOT; e=expr { mk_exp (EUnop (UNot, e)) $loc }
-  | NEG; e=expr { mk_exp (EUnop (UNeg, e)) $loc }
-  | CINT; e=expr { mk_exp (EUnop (UInt, e)) $loc }
-  | CCHAR; e=expr { mk_exp (EUnop (UChar, e)) $loc }
-  | CLG; e=expr { mk_exp (EUnop (ULog, e)) $loc }
+uexpr_:
+  | NOT; e=expr { EUnop (UNot, e) }
+  | NEG; e=expr { EUnop (UNeg, e) }
+  | CINT; e=expr { EUnop (UInt, e) }
+  | CCHAR; e=expr { EUnop (UChar, e) }
+  | CLG; e=expr { EUnop (ULog, e) }
+;
+
+closedstmt_:
+  | IF; e=expr; s1=closedstmt; ELSE; s2=closedstmt { SIf (e, s1, Some s2) }
+  | e=expr { SExp e }
+  | STOP { SStop }
+  | DO; sl=stmtlist; END { SDo sl }
+  | WHILE; e=expr; s=closedstmt { SWhile (e, s) }
 ;
 
 closedstmt:
-  | IF; e=expr; s1=closedstmt; ELSE; s2=closedstmt { mk_stmt $loc (SIf (e, s1, Some s2)) }
-  | e=expr { mk_stmt $loc (SExp e) }
-  | STOP { mk_stmt $loc SStop }
-  | DO; sl=stmtlist; END { mk_stmt $loc (SDo sl) }
-  | WHILE; e=expr; s=closedstmt { mk_stmt $loc (SWhile (e, s)) }
+  | closedstmt_ { mk_stmt $loc $1 }
+;
+
+openstmt_:
+  | IF; e=expr; s=stmt { SIf (e, s, None) }
+  | IF; e=expr; s1=closedstmt; ELSE; s2=openstmt { SIf (e, s1, Some s2) }
+  | WHILE; e=expr; s=openstmt { SWhile (e, s) }
 ;
 
 openstmt:
-  | IF; e=expr; s=stmt { mk_stmt $loc (SIf (e, s, None)) }
-  | IF; e=expr; s1=closedstmt; ELSE; s2=openstmt { mk_stmt $loc (SIf (e, s1, Some s2)) }
-  | WHILE; e=expr; s=openstmt { mk_stmt $loc (SWhile (e, s)) }
+  | openstmt_ { mk_stmt $loc $1 }
 ;
 
 stmt:
@@ -125,13 +135,8 @@ typ:
   | TLOGICAL { TLogical }
 ;
 
-varlist:
-  | i=IDENT { [i] }
-  | i=IDENT; COMMA; vl=varlist { i::vl }
-;
-
 decl:
-  | t=typ; vl=varlist { mk_stmt $loc (SDecl (t, vl)) }
+  | t=typ; vl=separated_nonempty_list(COMMA, IDENT) { mk_stmt $loc (SDecl (t, vl)) }
 ;
 
 decllist:
