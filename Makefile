@@ -12,6 +12,13 @@ parser: parser.mly
 lexer.ml: parser lexer.mll
 	ocamllex lexer.mll
 
+.PHONY: submit
+submit: parser.mly interp.ml
+	@[ -d "submit" ] && rm -rf submit
+	@[ ! -d "submit" ] && mkdir submit
+	cp -rf parser.mly interp.ml submit
+
+
 test: tests runtest.py
 	python3 runtest.py
 

@@ -49,9 +49,9 @@ let rec interp_exp (env: env) (e: 'a exp) : int * typ * env =
   | EAssign ({edesc = EVar var}, e) ->
           let (v, t, env) = interp_exp env e in
           let env' = (
-              match Varmap.find_opt var env with
-              | None -> Varmap.add var (v, t) env
-              | Some _ -> Varmap.update var (fun _ -> Some (v, t)) env)
+              match Env.find_opt var env with
+              | None -> Env.add var (v, t) env
+              | Some _ -> Env.update var (fun _ -> Some (v, t)) env)
           in (v, t, env')
   | EAssign (_, _) ->
      raise (RuntimeError (e.eloc, "Left side of assignment not a variable"))
@@ -65,7 +65,7 @@ let rec interp_exp (env: env) (e: 'a exp) : int * typ * env =
           let (v, t) = do_unop op v in
           (v, t, env')
   | EVar var ->
-          (match Varmap.find_opt var env with
+          (match Env.find_opt var env with
           | None -> raise (RuntimeError (e.eloc, Printf.sprintf "Undeclared variable %s" var))
           | Some (v, t) -> (v, t, env))
   | EConst c ->
