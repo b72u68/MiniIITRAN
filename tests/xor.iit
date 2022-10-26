@@ -1,0 +1,20 @@
+$result: 12
+
+INTEGER X, Y, RESULT
+LOGICAL BIT
+INTEGER MASK, XMOD, YMOD, TMP
+
+X <- -25
+Y <- -21
+RESULT <- 0
+MASK <- 1
+
+WHILE X # 0 AND Y # 0 DO
+	TMP <- X	XMOD <- TMP - 2 * (X <- X / 2)
+	TMP <- Y	YMOD <- TMP - 2 * (Y <- Y / 2)
+
+	BIT <- (XMOD = 0 OR YMOD = 0) AND (XMOD # 0 OR YMOD # 0)
+
+	RESULT <- RESULT + INT BIT * MASK
+	MASK <- MASK * 2
+END

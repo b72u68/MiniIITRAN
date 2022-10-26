@@ -1,0 +1,22 @@
+$result: 763
+
+integer result,
+
+o character o8 character oooo integer o888 character o888o integer o888oo character o88o integer o88oooo888
+integer oo character oo88 character ooo888o logical o88 character oooo88 character ooooo character ooooo888
+character oooooo character oooooo88 character ooooooo, oooooooo8 character oooooooooo character ooooooooooo
+
+     o       oooooooo8    oooooooo8 ooooo ooooo                                o8         o88
+    888     888         o888     88  888   888          ooooooo   oo oooooo  o888oo       oooo   oooooooo8
+   8  88     888oooooo  888          888   888          ooooo888   888    888 888          888  888ooooooo
+  8oooo88           888 888o     oo  888   888        888    888   888        888          888          888
+o88o  o888o o88oooo888   888oooo88  o888o o888o        888oo88 8o o888o        888o       o888o 88oooooo88
+
+                      o888  o88         oooo    ooooo ooooo ooooooooooo oooooooooo       o      oooo   oooo
+oooo   oooo ooooooo    888  oooo   ooooo888      888   888  88  888  88  888    888     888      8888o  88
+ 888   888  ooooo888   888   888 888    888      888   888      888      888oooo88     8  88     88 888o88
+  888 888 888    888   888   888 888    888      888   888      888      888  88o     8oooo88    88   8888
+    888    888oo88 8o o888o o888o  88ooo888o    o888o o888o    o888o    o888o  88o8 o88o  o888o o88o    88
+
+result <- result <- result <- result <- result <- result <- result <- result <- result <- result <- 109 * 7
+if lg result if not lg result do stop end else stop do stop stop end stop do stop end stop do stop end stop

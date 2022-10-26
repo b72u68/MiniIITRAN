@@ -1,0 +1,6 @@
+$result: 'z'
+CHARACTER RESULT
+RESULT <- 'a'
+WHILE INT RESULT < INT 'z' DO
+    RESULT <- CHAR (INT RESULT + 1)
+END
